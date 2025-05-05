@@ -1,0 +1,26 @@
+name: Deploy Doxygen Docs
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy-docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código fuente
+        uses: actions/checkout@v3
+
+      - name: Instalar Doxygen
+        run: sudo apt-get install doxygen -y
+
+      - name: Generar documentación
+        run: doxygen Doxyfile
+
+      - name: Subir documentación a la rama gh-pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
