@@ -3,24 +3,34 @@ name: Deploy Doxygen Docs
 on:
   push:
     branches:
+      - main
       - master
 
 jobs:
-  deploy-docs:
+  generate-docs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout código fuente
-        uses: actions/checkout@v3
+    - name: Checkout repo
+      uses: actions/checkout@v3
 
-      - name: Instalar Doxygen
-        run: sudo apt-get install doxygen -y
+    - name: Set up Doxygen
+      run: sudo apt-get install doxygen graphviz -y
 
-      - name: Generar documentación
-        run: doxygen Doxyfile
+    - name: Generate Doxygen documentation
+      run: doxygen Doxyfile
 
-      - name: Subir documentación a la rama gh-pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs
+    - name: Copy HTML output to docs folder
+      run: |
+        mkdir -p docs
+        cp -r html/* docs/
+
+    - name: Commit and push docs
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git add docs/
+        git commit -m "docs: actualizar documentación doxygen"
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
