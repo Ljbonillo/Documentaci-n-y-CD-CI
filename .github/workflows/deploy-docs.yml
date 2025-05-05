@@ -22,6 +22,10 @@ jobs:
       - name: Set up Doxygen
         uses: mattnotmitt/doxygen-action@v1.9.5
 
+      - name: Limpiar documentación anterior
+        run: rm -rf docs/html docs/latex
+
+
       - name: Generate Doxygen documentation
         run: doxygen Doxyfile
 
